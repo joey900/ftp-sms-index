@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Full Throttle Performance - SMS Notifications</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --dark: #141414;
+    --card: #1a1a1a;
+    --border: #2a2a2a;
+    --accent: #ff4d00;
+    --accent-hover: #e04400;
+    --accent-glow: rgba(255, 77, 0, 0.15);
+    --silver: #a0a0a0;
+    --light: #d4d4d4;
+    --white: #f5f5f5;
+    --success: #00c853;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Rajdhani', sans-serif;
+    background: var(--black);
+    color: var(--light);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    line-height: 1.6;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 50%, var(--accent-glow) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 50%, rgba(255,77,0,0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page-wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 560px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .logo-text {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 34px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--white);
+    line-height: 1.1;
+  }
+
+  .logo-text span {
+    color: var(--accent);
+  }
+
+  .tagline {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--silver);
+    margin-top: 6px;
+  }
+
+  .accent-bar {
+    width: 60px;
+    height: 3px;
+    background: var(--accent);
+    margin: 12px auto 0;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 40px 36px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,77,0,0.05);
+  }
+
+  .card-title {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 22px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .card-subtitle {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--silver);
+    margin-bottom: 28px;
+    line-height: 1.5;
+  }
+
+  .form-group { margin-bottom: 20px; }
+
+  .form-label {
+    display: block;
+    font-family: 'Oswald', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--silver);
+    margin-bottom: 8px;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--dark);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--white);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+
+  .form-input:focus { border-color: var(--accent); }
+  .form-input::placeholder { color: #444; }
+
+  .consent-wrapper {
+    margin: 24px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .consent-wrapper input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    border: 2px solid var(--border);
+    border-radius: 3px;
+    background: var(--dark);
+    cursor: pointer;
+    margin-top: 2px;
+    position: relative;
+    transition: all 0.2s;
+  }
+
+  .consent-wrapper input[type="checkbox"]:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .consent-wrapper input[type="checkbox"]:checked::after {
+    content: '\2713';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .consent-text {
+    font-size: 12.5px;
+    line-height: 1.65;
+    color: var(--silver);
+    font-weight: 500;
+  }
+
+  .consent-text a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .consent-text a:hover { color: var(--white); }
+
+  .submit-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--accent);
+    color: var(--white);
+    border: none;
+    border-radius: 4px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+
+  .submit-btn:hover { background: var(--accent-hover); }
+  .submit-btn:active { transform: scale(0.99); }
+  .submit-btn:disabled { background: #333; color: #666; cursor: not-allowed; }
+
+  .success-message {
+    display: none;
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .success-message .checkmark {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--success);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: white;
+    margin-bottom: 16px;
+  }
+
+  .success-message h3 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .success-message p {
+    font-size: 14px;
+    color: var(--silver);
+    font-weight: 500;
+  }
+
+  .disclosure-footer {
+    margin-top: 24px;
+    padding: 20px 24px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 4px;
+  }
+
+  .disclosure-footer p {
+    font-size: 11.5px;
+    line-height: 1.7;
+    color: #666;
+    font-weight: 500;
+  }
+
+  .disclosure-footer p + p { margin-top: 8px; }
+  .disclosure-footer a { color: #888; text-decoration: underline; }
+
+  .page-footer {
+    text-align: center;
+    margin-top: 32px;
+    font-size: 12px;
+    color: #444;
+    font-weight: 500;
+  }
+
+  .page-footer a { color: #666; text-decoration: none; }
+
+  @media (max-width: 480px) {
+    .card { padding: 28px 20px; }
+    .logo-text { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrapper">
+  <div class="header">
+    <div class="logo-text">Full Throttle <span>Performance</span></div>
+    <div class="tagline">Perris, California</div>
+    <div class="accent-bar"></div>
+  </div>
+
+  <div class="card">
+    <div id="form-view">
+      <h2 class="card-title">Stay Updated via Text</h2>
+      <p class="card-subtitle">Sign up to receive appointment reminders, service updates, estimates, and payment notifications via text message from Full Throttle Performance.</p>
+
+      <div class="form-group">
+        <label class="form-label" for="fullName">Full Name</label>
+        <input class="form-input" type="text" id="fullName" placeholder="Your full name" autocomplete="name">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="phone">Mobile Phone Number</label>
+        <input class="form-input" type="tel" id="phone" placeholder="(951) 555-1234" autocomplete="tel">
+      </div>
+
+      <div class="consent-wrapper">
+        <input type="checkbox" id="smsConsent">
+        <label class="consent-text" for="smsConsent">
+          By checking this box, I agree to receive recurring automated SMS and MMS messages from Full Throttle Performance Corporation regarding appointment reminders, service updates, estimates, invoices, and payment notifications.
+          Message frequency varies. Message and data rates may apply.
+          Reply <strong>STOP</strong> to opt out at any time. Reply <strong>HELP</strong> for assistance or contact us at (951) 604-6944 or fullthrottleperformance951@gmail.com.
+          Consent is not a condition of purchase.
+          View our <a href="https://docs.google.com/document/d/1NS17M6Jf71TSPRyxcj0gZqBPWpnPxCZNCQ5H0yD0ViI/edit?tab=t.0" target="_blank">Privacy Policy</a> and <a href="https://docs.google.com/document/d/1fECDTuAcYP_u_mV7xR-bnKvh6lUW58QKQY-21miUeLw/edit?tab=t.0" target="_blank">SMS Terms and Conditions</a>.
+        </label>
+      </div>
+
+      <button class="submit-btn" id="submitBtn" disabled onclick="handleSubmit()">Sign Up for Text Updates</button>
+    </div>
+
+    <div class="success-message" id="success-view">
+      <div class="checkmark">&#10003;</div>
+      <h3>You're All Set!</h3>
+      <p>You've been signed up for text notifications from Full Throttle Performance. You can opt out at any time by replying STOP.</p>
+    </div>
+  </div>
+
+  <div class="disclosure-footer">
+    <p><strong>SMS Program Details:</strong> Full Throttle Performance Corporation, 140 W Walnut Ave, B-4, Perris, CA 92571. You may receive recurring automated text messages related to your vehicle service. Message frequency varies. Message and data rates may apply. Reply STOP to cancel. Reply HELP for help. Contact: (951) 604-6944 or fullthrottleperformance951@gmail.com.</p>
+    <p>No mobile opt-in data or consent information will be shared with third parties for marketing purposes. View our <a href="https://docs.google.com/document/d/1NS17M6Jf71TSPRyxcj0gZqBPWpnPxCZNCQ5H0yD0ViI/edit?tab=t.0" target="_blank">Privacy Policy</a> | <a href="https://docs.google.com/document/d/1fECDTuAcYP_u_mV7xR-bnKvh6lUW58QKQY-21miUeLw/edit?tab=t.0" target="_blank">SMS Terms and Conditions</a></p>
+  </div>
+
+  <div class="page-footer">
+    &copy; 2026 Full Throttle Performance Corporation &middot; <a href="https://fullthrottleperformanceshop.com">fullthrottleperformanceshop.com</a>
+  </div>
+</div>
+
+<script>
+  const checkbox = document.getElementById('smsConsent');
+  const btn = document.getElementById('submitBtn');
+  const phoneInput = document.getElementById('phone');
+
+  checkbox.addEventListener('change', () => {
+    btn.disabled = !checkbox.checked;
+  });
+
+  phoneInput.addEventListener('input', (e) => {
+    let val = e.target.value.replace(/\D/g, '');
+    if (val.length > 10) val = val.slice(0, 10);
+    if (val.length >= 7) {
+      e.target.value = `(${val.slice(0,3)}) ${val.slice(3,6)}-${val.slice(6)}`;
+    } else if (val.length >= 4) {
+      e.target.value = `(${val.slice(0,3)}) ${val.slice(3)}`;
+    } else if (val.length > 0) {
+      e.target.value = `(${val}`;
+    }
+  });
+
+  function handleSubmit() {
+    const name = document.getElementById('fullName').value.trim();
+    const phone = phoneInput.value.trim();
+    if (!name || !phone || !checkbox.checked) return;
+    document.getElementById('form-view').style.display = 'none';
+    document.getElementById('success-view').style.display = 'block';
+  }
+</script>
+
+</body>
+</html>
