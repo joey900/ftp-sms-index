@@ -1,1 +1,0 @@
-# ftp-sms-index
